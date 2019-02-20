@@ -20,11 +20,10 @@ public class InvenoryOperationsQueryArrayImpl {
     public List<Inventory> queryArrayElemMatch(String status, Integer qty) {
         Query query = new Query();
         query.addCriteria( new Criteria().orOperator(
-                Criteria.where("status").elemMatch(Criteria.where("day").is(day)),
+                Criteria.where("status").elemMatch(
+                        Criteria.where("day").is(day),
+                        Criteria.where("day").is(day)),
                 Criteria.where("qty").lt(qty)));
         return mongoOperations.find(query, Inventory.class);
-        Criteria
-        Criteria.where("flowList").elemMatch(Criteria.where("day").is(day));
-        return null;
     }
 }
