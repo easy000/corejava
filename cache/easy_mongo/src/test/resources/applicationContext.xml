@@ -15,10 +15,11 @@
     1.mongo：连接配置
     2.db-factory：相当于sessionFactory
     3.mongoTemplate：与数据库接口交互的主要实现类
+    replica-set="${mongo.replicaset}"
     host="${mongo.host}" port="${mongo.port}" credentials="${mongo.user}:${mongo.password}@${mongo.database}"
     -->
 
-    <mongo:mongo-client id="mongoClient" replica-set="${mongo.replicaset}" >
+    <mongo:mongo-client id="mongoClient" host="${mongo.host}" port="${mongo.port}"  >
         <mongo:client-options
                 min-connections-per-host="${mongo.minConnectionsPerHost}"
                 threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"

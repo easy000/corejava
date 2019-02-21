@@ -1,9 +1,11 @@
 package org.easy.mongo.test;
 
+import org.easy.mongo.entity.Instock;
 import org.easy.mongo.entity.Inventory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -12,13 +14,14 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 //告诉junit spring配置文件
 @ContextConfiguration({"classpath:applicationContext.xml"})
 public class InvenoryOperationsQueryTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InvenoryOperationsQueryTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(InvenoryOperationsQueryTest.class);
 
     @Autowired
     private MongoOperations mongoOperations;
@@ -37,15 +40,27 @@ public class InvenoryOperationsQueryTest {
         //db.inventory.find( { "instock": { warehouse: "A", qty: 5 } } )
         //# 查询含有 instock array中的json元素为{ warehouse: "A", qty: 5 } 的数据
 
-        String status = "A";
+        String warehouse = "A";
         Integer qty = 5;
+        Instock instock = new Instock();
+        instock.setQty(qty);
+        instock.setWarehouse(warehouse);
         Query query = new Query();
-        query.addCriteria( new Criteria().and("instock").andOperator(
-                Criteria.where("warehouse").is(status),
-                Criteria.where("qty").lt(qty)));
-        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
-        LOGGER.error("==========================");
-        printLog(list);
+//        query.addCriteria( new Criteria().and("instock").is(instock));
+////                Criteria.where("warehouse").is(warehouse),
+////                Criteria.where("qty").is(qty)));
+//        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
+//        LOGGER.error("==========================");
+//        printLog(list);
+//
+//        query = new Query();
+//        query.addCriteria( new Criteria().andOperator(
+//                Criteria.where("item").is("journal")));
+        List<String > tags = new ArrayList<>();
+        tags.add("blank");
+        tags.add("red");
+        query.addCriteria(Criteria.where("tags").all(tags));
+        printLog( mongoOperations.find(query, Inventory.class));
     }
 
     @Test

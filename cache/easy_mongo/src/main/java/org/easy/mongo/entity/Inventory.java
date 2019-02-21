@@ -9,6 +9,8 @@ public class Inventory {
     private String status;
     private List<String> tags;
     private List<Integer> dimCm;
+    private List<Instock> instock;
+
 //    { item: "journal", instock: [ { warehouse: "A", qty: 5 }, { warehouse: "C", qty: 15 } ] },
 //    { item: "notebook", instock: [ { warehouse: "C", qty: 5 } ] },
 //    { item: "paper", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 15 } ] },
@@ -74,5 +76,26 @@ public class Inventory {
 
     public void setDimCm(List<Integer> dimCm) {
         this.dimCm = dimCm;
+    }
+
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "item='" + item + '\'' +
+                ", qty=" + qty +
+                ", size=" + size +
+                ", status='" + status + '\'' +
+                ", tags=" + tags +
+                ", dimCm=" + dimCm +
+                ", instock=" + instock +
+                '}';
+    }
+
+    public List<Instock> getInstock() {
+        return instock;
+    }
+
+    public void setInstock(List<Instock> instock) {
+        this.instock = instock;
     }
 }

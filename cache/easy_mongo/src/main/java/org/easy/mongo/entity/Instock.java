@@ -28,5 +28,11 @@ public class Instock {
     public Instock() {
     }
 
-
+    @Override
+    public String toString() {
+        return "Instock{" +
+                "warehouse='" + warehouse + '\'' +
+                ", qty=" + qty +
+                '}';
+    }
 }

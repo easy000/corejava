@@ -3,3 +3,10 @@
 /.idea
 /
 *.iml
+
+/*.iml
+
+/base/*.iml
+/
+base/easy_collection/target
+/cache/easy_mongo/target
