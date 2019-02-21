@@ -1,0 +1,8 @@
+org\easy\mongo\entity\Address.class
+org\easy\mongo\entity\Size.class
+org\easy\mongo\dao\impl\PersonDao.class
+org\easy\mongo\entity\Instock.class
+org\easy\mongo\entity\Inventory.class
+org\easy\mongo\entity\Person.class
+org\easy\mongo\dao\impl\InvenoryOperationsQueryArrayImpl.class
+org\easy\mongo\dao\impl\InvenoryOperationsQueryImpl.class
