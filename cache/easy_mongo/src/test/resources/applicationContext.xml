@@ -19,7 +19,7 @@
     host="${mongo.host}" port="${mongo.port}" credentials="${mongo.user}:${mongo.password}@${mongo.database}"
     -->
 
-    <mongo:mongo-client id="mongoClient" host="${mongo.host}" port="${mongo.port}"  >
+    <mongo:mongo-client id="mongoClient" replica-set="${mongo.replicaset}"  >
         <mongo:client-options
                 min-connections-per-host="${mongo.minConnectionsPerHost}"
                 threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"

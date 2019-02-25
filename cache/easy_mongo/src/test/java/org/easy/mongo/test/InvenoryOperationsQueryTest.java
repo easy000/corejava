@@ -46,21 +46,10 @@ public class InvenoryOperationsQueryTest {
         instock.setQty(qty);
         instock.setWarehouse(warehouse);
         Query query = new Query();
-//        query.addCriteria( new Criteria().and("instock").is(instock));
-////                Criteria.where("warehouse").is(warehouse),
-////                Criteria.where("qty").is(qty)));
-//        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
-//        LOGGER.error("==========================");
-//        printLog(list);
-//
-//        query = new Query();
-//        query.addCriteria( new Criteria().andOperator(
-//                Criteria.where("item").is("journal")));
-        List<String > tags = new ArrayList<>();
-        tags.add("blank");
-        tags.add("red");
-        query.addCriteria(Criteria.where("tags").all(tags));
-        printLog( mongoOperations.find(query, Inventory.class));
+        query.addCriteria( new Criteria().and("instock").is(instock));
+        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
     }
 
     @Test
@@ -68,7 +57,11 @@ public class InvenoryOperationsQueryTest {
         //db.inventory.find( { 'instock.0.qty': { $lte: 20 } } )
         // # 查询含有 instock中的第一个json元素中的qty字段小于或等于 20 的数据
 
-
+        Query query = new Query();
+        query.addCriteria( new Criteria().and("instock.0.qty").lte(20));
+        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
 
     }
 
@@ -76,28 +69,58 @@ public class InvenoryOperationsQueryTest {
     public void testArrayJson2() {
         //db.inventory.find( { 'instock.qty': { $lte: 20 } } )
         // # 查询含有 instock中的任意json元素中的qty小于或等于 20 的数据
-
-
-
-
+        Query query = new Query();
+        query.addCriteria( new Criteria().and("instock.0.qty").lte(20));
+        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
     }
 
     @Test
     public void testArrayJson3() {
         //db.inventory.find( { "instock": { $elemMatch: { qty: 5, warehouse: "A" } } } )
         // # 查询含有  instock中的json元素 同时满足qty为5，warehouse为A  的数据
-
+        Query query = new Query();
+        query.addCriteria( new Criteria().andOperator(
+                Criteria.where("instock").elemMatch(
+                        new Criteria().andOperator(
+                                Criteria.where("qty").is(5),
+                                Criteria.where("warehouse").is("A")
+                        ))));
+        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
         //db.inventory.find( { "instock.qty": 5, "instock.warehouse": "A" } )
         // # 查询含有 instock中的qty为5 或者 instock中的warehousr为A 的数据
+
+        query = new Query();
+        query.addCriteria( new Criteria().andOperator(
+                Criteria.where("instock.qty").is(5),
+                Criteria.where("instock.warehouse").is("A")));
+        list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
     }
 
     @Test
     public void testArrayJson4() {
         //db.inventory.find( { "instock": { $elemMatch: { qty: { $gt: 10, $lte: 20 } } } } )
         // # 查询含有 instock中的json元素 同时满足qty大于10并小于等于20 的数据
-
+        Query query = new Query();
+        query.addCriteria( new Criteria().andOperator(
+                Criteria.where("instock").elemMatch(
+                        Criteria.where("qty").gt(10).lt(20))));
+        List<Inventory> list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
         //db.inventory.find( { "instock.qty": { $gt: 10,  $lte: 20 } } )
         // # 查询含有 instock中的qty 大于10 或 小于等于20 的数据
+        query = new Query();
+        query.addCriteria( new Criteria().andOperator(
+                Criteria.where("instock.qty").gt(10).lt(20)));
+        list = mongoOperations.find(query, Inventory.class, "inventory");
+        LOGGER.error("==========================");
+        printLog(list);
 
     }
 
@@ -106,4 +129,15 @@ public class InvenoryOperationsQueryTest {
             System.out.println(obj);
         }
     }
+
+
+    //
+//        query = new Query();
+//        query.addCriteria( new Criteria().andOperator(
+//                Criteria.where("item").is("journal")));
+//    List<String > tags = new ArrayList<>();
+//        tags.add("blank");
+//        tags.add("red");
+//        query.addCriteria(Criteria.where("tags").all(tags));
+//    printLog( mongoOperations.find(query, Inventory.class));
 }
