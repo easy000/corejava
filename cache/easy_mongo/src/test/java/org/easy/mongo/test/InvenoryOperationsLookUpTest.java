@@ -1,4 +1,4 @@
-package org.easy.mongo.test;
+﻿package org.easy.mongo.test;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -15,7 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;//要记得import
 
-
+//https://www.jb51.net/article/151854.htm
+//https://blog.csdn.net/u011113654/article/details/80353013
 import java.util.ArrayList;
 import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
