@@ -20,6 +20,7 @@
 
 	<modules>
 		<module>easy_mongo</module>
+		<module>easy_redis</module>
 	</modules>
 
 	<dependencies>
