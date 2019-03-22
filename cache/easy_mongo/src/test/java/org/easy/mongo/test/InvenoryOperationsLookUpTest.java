@@ -43,6 +43,9 @@ public class InvenoryOperationsLookUpTest {
 
     @Test
     public void test() {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append().append()
         //设置lookup
         LookupOperation lookupOperation = LookupOperation.newLookup().from("inventory").localField("item").foreignField("sku").as("docs");
 
