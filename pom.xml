@@ -29,7 +29,7 @@
         <commons.codec.version>1.7</commons.codec.version>
         <commons.beanutils.version>1.8.3</commons.beanutils.version>
         <commons.httpclient.version>4.3.5</commons.httpclient.version>
-        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
         <commons-digester.version>2.1</commons-digester.version>
         <jersey-guava.version>2.25.1</jersey-guava.version>
         <mysql.version>5.1.6</mysql.version>
