@@ -1,190 +1,190 @@
-package com.xiong.core.utils;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
-
-/**
- * ·´Éä¹¤¾ßÀà
- * 
- * @Author:zhangguangliang
- * @Time:2017Äê9ÔÂ16ÈÕ14:44:10
- */
-public class ReflectionUtil extends ReflectionUtils {
-
-    private static Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
-
-    /**
-     * »ñÈ¡obj¶ÔÏófieldNameµÄField
-     * 
-     * @param obj
-     * @param fieldName
-     * @return
-     */
-    public static Field getFieldByFieldName(Object obj, String fieldName) {
-        if (obj == null || fieldName == null) {
-            return null;
-        }
-        for (Class<?> superClass = obj.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
-            try {
-                return superClass.getDeclaredField(fieldName);
-            } catch (Exception e) {
-
-            }
-        }
-        return null;
-    }
-
-    /**
-     * »ñÈ¡obj¶ÔÏófieldNameµÄÊôÐÔÖµ
-     * 
-     * @param obj
-     * @param fieldName
-     * @return
-     */
-    public static Object getValueByFieldName(Object obj, String fieldName) {
-        Object value = null;
-        try {
-            Field field = getFieldByFieldName(obj, fieldName);
-            if (field != null) {
-                if (field.isAccessible()) {
-                    value = field.get(obj);
-                } else {
-                    field.setAccessible(true);
-                    value = field.get(obj);
-                    field.setAccessible(false);
-                }
-            }
-        } catch (Exception e) {
-            logger.error("¸ü¼ÓÊôÐÔÃû³Æ»ñÈ¡ÊôÐÔÖµÒì³££º");
-        }
-        return value;
-    }
-
-    /**
-     * »ñÈ¡obj¶ÔÏófieldNameµÄÊôÐÔÖµ
-     * 
-     * @param obj
-     * @param fieldName
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T getValueByFieldType(Object obj, Class<T> fieldType) {
-        Object value = null;
-        for (Class<?> superClass = obj.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
-            try {
-                Field[] fields = superClass.getDeclaredFields();
-                for (Field f : fields) {
-                    if (f.getType() == fieldType) {
-                        if (f.isAccessible()) {
-                            value = f.get(obj);
-                            break;
-                        } else {
-                            f.setAccessible(true);
-                            value = f.get(obj);
-                            f.setAccessible(false);
-                            break;
-                        }
-                    }
-                }
-                if (value != null) {
-                    break;
-                }
-            } catch (Exception e) {
-                 logger.error("¸ü¼ÓÊôÐÔÀàÐÍ»ñÈ¡ÊôÐÔÖµÒì³££º");
-            }
-        }
-        return (T) value;
-    }
-
-    /**
-     * ÉèÖÃobj¶ÔÏófieldNameµÄÊôÐÔÖµ
-     * 
-     * @param obj
-     * @param fieldName
-     * @param value
-     * @throws SecurityException
-     * @throws NoSuchFieldException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     */
-    public static boolean setValueByFieldName(Object obj, String fieldName, Object value) {
-        try {
-            // java.lang.Class.getDeclaredField()·½·¨ÓÃ·¨ÊµÀý½Ì³Ì -
-            // ·½·¨·µ»ØÒ»¸öField¶ÔÏó£¬Ëü·´Ó³´ËClass¶ÔÏóËù±íÊ¾µÄÀà»ò½Ó¿ÚµÄÖ¸¶¨ÒÑÉùÃ÷×Ö¶Î¡£
-            // ´Ë·½·¨·µ»ØÕâ¸öÀàÖÐµÄÖ¸¶¨×Ö¶ÎµÄField¶ÔÏó
-            Field field = obj.getClass().getDeclaredField(fieldName);
-            /**
-             * public void setAccessible(boolean flag) throws SecurityException½«´Ë¶ÔÏóµÄ accessible ±êÖ¾ÉèÖÃÎªÖ¸Ê¾µÄ²¼¶ûÖµ¡£ÖµÎª true ÔòÖ¸Ê¾·´ÉäµÄ¶ÔÏóÔÚÊ¹ÓÃÊ±Ó¦¸ÃÈ¡Ïû Java ÓïÑÔ·ÃÎÊ¼ì²é¡£ÖµÎª false ÔòÖ¸Ê¾·´ÉäµÄ¶ÔÏóÓ¦¸ÃÊµÊ© Java ÓïÑÔ·ÃÎÊ¼ì²é¡£ Ê×ÏÈ£¬Èç¹û´æÔÚ°²È«¹ÜÀíÆ÷£¬ÔòÔÚ
-             * ReflectPermission("suppressAccessChecks") È¨ÏÞÏÂµ÷ÓÃ checkPermission ·½·¨¡£ Èç¹û flag Îª true£¬²¢ÇÒ²»ÄÜ¸ü¸Ä´Ë¶ÔÏóµÄ¿É·ÃÎÊÐÔ£¨ÀýÈç£¬Èç¹û´ËÔªËØ¶ÔÏóÊÇ Class ÀàµÄ Constructor ¶ÔÏó£©£¬Ôò»áÒý·¢ SecurityException¡£ Èç¹û´Ë¶ÔÏóÊÇ java.lang.Class ÀàµÄ Constructor ¶ÔÏó£¬²¢ÇÒ
-             * flag Îª true£¬Ôò»áÒý·¢ SecurityException¡£ ²ÎÊý£º flag - accessible ±êÖ¾µÄÐÂÖµ Å×³ö£º SecurityException - Èç¹ûÇëÇó±»¾Ü¾ø¡£
-             */
-            if (field.isAccessible()) {// »ñÈ¡´Ë¶ÔÏóµÄ accessible ±êÖ¾µÄÖµ¡£
-                field.set(obj, value);// ½«Ö¸¶¨¶ÔÏó±äÁ¿ÉÏ´Ë Field ¶ÔÏó±íÊ¾µÄ×Ö¶ÎÉèÖÃÎªÖ¸¶¨µÄÐÂÖµ
-            } else {
-                field.setAccessible(true);
-                field.set(obj, value);
-                field.setAccessible(false);
-            }
-            return true;
-        } catch (Exception e) {
-            logger.error("¸ü¼ÓÊôÐÔÃû³ÆÉèÖÃÊôÐÔÖµÒì³££º");
-        }
-        return false;
-    }
-
-    /**
-     * Ö´ÐÐÄ³¶ÔÏóµÄ·½·¨
-     * 
-     * @param owner
-     * @param methodName
-     * @param args
-     * @return
-     * @throws Exception
-     */
-    public Object invokeMethod(Object owner, String methodName, Object[] args) throws Exception {
-        Class<? extends Object> cls = owner.getClass();
-        @SuppressWarnings("rawtypes")
-        Class[] argclass = new Class[args.length];
-        for (int i = 0, j = argclass.length; i < j; i++) {
-            argclass[i] = args[i].getClass();
-        }
-        Method method = cls.getMethod(methodName, argclass);
-        return method.invoke(owner, args);
-    }
-
-    /**
-     * Ö´ÐÐ¾²Ì¬ÀàµÄ·½·¨
-     * 
-     * @param className
-     * @param methodName
-     * @param args
-     * @return
-     * @throws Exception
-     */
-    public Object invokeStaticMethod(String className, String methodName, Object[] args) throws Exception {
-        Class<?> cls = Class.forName(className);
-        @SuppressWarnings("rawtypes")
-        Class[] argclass = new Class[args.length];
-        for (int i = 0, j = argclass.length; i < j; i++) {
-            argclass[i] = args[i].getClass();
-        }
-        Method method = cls.getMethod(methodName, argclass);
-        return method.invoke(null, args);
-    }
-
-    public Object newInstance(String className, Object[] args) throws Exception {
-        Class<?> clss = Class.forName(className);
-        @SuppressWarnings("rawtypes")
-        Class[] argclass = new Class[args.length];
-        for (int i = 0, j = argclass.length; i < j; i++) {
-            argclass[i] = args[i].getClass();
-        }
-        Constructor<?> cons = clss.getConstructor(argclass);
-        return cons.newInstance();
-    }
-
-}
+//package com.xiong.core.utils;
+//
+//import java.lang.reflect.Constructor;
+//import java.lang.reflect.Field;
+//import java.lang.reflect.Method;
+//
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.spi.LoggerFactory;
+//
+///**
+// * ï¿½ï¿½ï¿½ä¹¤ï¿½ï¿½ï¿½ï¿½
+// *
+// * @Author:zhangguangliang
+// * @Time:2017ï¿½ï¿½9ï¿½ï¿½16ï¿½ï¿½14:44:10
+// */
+//public class ReflectionUtil extends ReflectionUtils {
+//
+//    private static Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
+//
+//    /**
+//     * ï¿½ï¿½È¡objï¿½ï¿½ï¿½ï¿½fieldNameï¿½ï¿½Field
+//     *
+//     * @param obj
+//     * @param fieldName
+//     * @return
+//     */
+//    public static Field getFieldByFieldName(Object obj, String fieldName) {
+//        if (obj == null || fieldName == null) {
+//            return null;
+//        }
+//        for (Class<?> superClass = obj.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
+//            try {
+//                return superClass.getDeclaredField(fieldName);
+//            } catch (Exception e) {
+//
+//            }
+//        }
+//        return null;
+//    }
+//
+//    /**
+//     * ï¿½ï¿½È¡objï¿½ï¿½ï¿½ï¿½fieldNameï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+//     *
+//     * @param obj
+//     * @param fieldName
+//     * @return
+//     */
+//    public static Object getValueByFieldName(Object obj, String fieldName) {
+//        Object value = null;
+//        try {
+//            Field field = getFieldByFieldName(obj, fieldName);
+//            if (field != null) {
+//                if (field.isAccessible()) {
+//                    value = field.get(obj);
+//                } else {
+//                    field.setAccessible(true);
+//                    value = field.get(obj);
+//                    field.setAccessible(false);
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.error("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµï¿½ì³£ï¿½ï¿½");
+//        }
+//        return value;
+//    }
+//
+//    /**
+//     * ï¿½ï¿½È¡objï¿½ï¿½ï¿½ï¿½fieldNameï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+//     *
+//     * @param obj
+//     * @param fieldName
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    public static <T> T getValueByFieldType(Object obj, Class<T> fieldType) {
+//        Object value = null;
+//        for (Class<?> superClass = obj.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
+//            try {
+//                Field[] fields = superClass.getDeclaredFields();
+//                for (Field f : fields) {
+//                    if (f.getType() == fieldType) {
+//                        if (f.isAccessible()) {
+//                            value = f.get(obj);
+//                            break;
+//                        } else {
+//                            f.setAccessible(true);
+//                            value = f.get(obj);
+//                            f.setAccessible(false);
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (value != null) {
+//                    break;
+//                }
+//            } catch (Exception e) {
+//                 logger.error("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµï¿½ì³£ï¿½ï¿½");
+//            }
+//        }
+//        return (T) value;
+//    }
+//
+//    /**
+//     * ï¿½ï¿½ï¿½ï¿½objï¿½ï¿½ï¿½ï¿½fieldNameï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+//     *
+//     * @param obj
+//     * @param fieldName
+//     * @param value
+//     * @throws SecurityException
+//     * @throws NoSuchFieldException
+//     * @throws IllegalArgumentException
+//     * @throws IllegalAccessException
+//     */
+//    public static boolean setValueByFieldName(Object obj, String fieldName, Object value) {
+//        try {
+//            // java.lang.Class.getDeclaredField()ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½Êµï¿½ï¿½ï¿½Ì³ï¿½ -
+//            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Fieldï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½Classï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Úµï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶Î¡ï¿½
+//            // ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ö¸ï¿½ï¿½ï¿½Ö¶Îµï¿½Fieldï¿½ï¿½ï¿½ï¿½
+//            Field field = obj.getClass().getDeclaredField(fieldName);
+//            /**
+//             * public void setAccessible(boolean flag) throws SecurityExceptionï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ accessible ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ÎªÖ¸Ê¾ï¿½Ä²ï¿½ï¿½ï¿½Öµï¿½ï¿½ÖµÎª true ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½Ê±Ó¦ï¿½ï¿½È¡ï¿½ï¿½ Java ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ê¼ï¿½é¡£ÖµÎª false ï¿½ï¿½Ö¸Ê¾ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ÊµÊ© Java ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ê¼ï¿½é¡£ ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//             * ReflectPermission("suppressAccessChecks") È¨ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ checkPermission ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ flag Îª trueï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ü¸ï¿½ï¿½Ä´Ë¶ï¿½ï¿½ï¿½Ä¿É·ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ç£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ôªï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ Class ï¿½ï¿½ï¿½ Constructor ï¿½ï¿½ï¿½ó£©£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SecurityExceptionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½ java.lang.Class ï¿½ï¿½ï¿½ Constructor ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½ï¿½
+//             * flag Îª trueï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SecurityExceptionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ flag - accessible ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Öµ ï¿½×³ï¿½ï¿½ï¿½ SecurityException - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó±»¾Ü¾ï¿½ï¿½ï¿½
+//             */
+//            if (field.isAccessible()) {// ï¿½ï¿½È¡ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ accessible ï¿½ï¿½Ö¾ï¿½ï¿½Öµï¿½ï¿½
+//                field.set(obj, value);// ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Field ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÖ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+//            } else {
+//                field.setAccessible(true);
+//                field.set(obj, value);
+//                field.setAccessible(false);
+//            }
+//            return true;
+//        } catch (Exception e) {
+//            logger.error("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ì³£ï¿½ï¿½");
+//        }
+//        return false;
+//    }
+//
+//    /**
+//     * Ö´ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
+//     *
+//     * @param owner
+//     * @param methodName
+//     * @param args
+//     * @return
+//     * @throws Exception
+//     */
+//    public Object invokeMethod(Object owner, String methodName, Object[] args) throws Exception {
+//        Class<? extends Object> cls = owner.getClass();
+//        @SuppressWarnings("rawtypes")
+//        Class[] argclass = new Class[args.length];
+//        for (int i = 0, j = argclass.length; i < j; i++) {
+//            argclass[i] = args[i].getClass();
+//        }
+//        Method method = cls.getMethod(methodName, argclass);
+//        return method.invoke(owner, args);
+//    }
+//
+//    /**
+//     * Ö´ï¿½Ð¾ï¿½Ì¬ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
+//     *
+//     * @param className
+//     * @param methodName
+//     * @param args
+//     * @return
+//     * @throws Exception
+//     */
+//    public Object invokeStaticMethod(String className, String methodName, Object[] args) throws Exception {
+//        Class<?> cls = Class.forName(className);
+//        @SuppressWarnings("rawtypes")
+//        Class[] argclass = new Class[args.length];
+//        for (int i = 0, j = argclass.length; i < j; i++) {
+//            argclass[i] = args[i].getClass();
+//        }
+//        Method method = cls.getMethod(methodName, argclass);
+//        return method.invoke(null, args);
+//    }
+//
+//    public Object newInstance(String className, Object[] args) throws Exception {
+//        Class<?> clss = Class.forName(className);
+//        @SuppressWarnings("rawtypes")
+//        Class[] argclass = new Class[args.length];
+//        for (int i = 0, j = argclass.length; i < j; i++) {
+//            argclass[i] = args[i].getClass();
+//        }
+//        Constructor<?> cons = clss.getConstructor(argclass);
+//        return cons.newInstance();
+//    }
+//
+//}

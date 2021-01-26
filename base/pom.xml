@@ -21,6 +21,8 @@
 	<modules>
 		<module>easy_collection</module>
 		<module>easy_common</module>
+		<module>easy_thread</module>
+		<module>easy_patterns</module>
 	</modules>
 
 	<dependencies>

@@ -1,263 +1,263 @@
-package com.xiong.core.utils;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.converters.DateConverter;
-import org.apache.commons.lang.StringUtils;  
-
-/**
- * 
- * ·´ÉäµÄ Utils º¯Êý¼¯ºÏ
- * Ìá¹©·ÃÎÊË½ÓÐ±äÁ¿, »ñÈ¡·ºÐÍÀàÐÍ Class, ÌáÈ¡¼¯ºÏÖÐÔªËØÊôÐÔµÈ Utils º¯Êý
- *
- */
-public class ReflectionUtils {
-	
-	/**
-	 * ½«·´ÉäÊ±µÄ "¼ì²éÒì³£" ×ª»»Îª "ÔËÐÐÊ±Òì³£"
-	 * @return
-	 */
-	public static IllegalArgumentException convertToUncheckedException(Exception ex){
-		if(ex instanceof IllegalAccessException || ex instanceof IllegalArgumentException
-				|| ex instanceof NoSuchMethodException){
-			throw new IllegalArgumentException("·´ÉäÒì³£", ex);
-		}else{
-			throw new IllegalArgumentException(ex);
-		}
-	}
-	
-	/**
-	 * ×ª»»×Ö·û´®ÀàÐÍµ½ toType ÀàÐÍ, »ò toType ×ªÎª×Ö·û´®
-	 * @param value:  ´ý×ª»»µÄ×Ö·û´®
-	 * @param toType: Ìá¹©ÀàÐÍÐÅÏ¢µÄ Class, ¿ÉÒÔÊÇ»ù±¾Êý¾ÝÀàÐÍµÄ°ü×°Àà»òÖ¸¶¨¸ñÊ½ÈÕÆÚÐÍ
-	 * @return
-	 */
-	public static Object convertValue(Object value, Class<?> toType){
-		try {
-			DateConverter dc = new DateConverter();
-			
-			dc.setUseLocaleFormat(true);
-			dc.setPatterns(new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"});
-
-			ConvertUtils.register(dc, Date.class);
-			
-			return ConvertUtils.convert(value, toType);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw convertToUncheckedException(e);
-		}
-	}
-
-	/**
-	 * ÌáÈ¡¼¯ºÏÖÐµÄ¶ÔÏóµÄÊôÐÔ(Í¨¹ý getter ·½·¨), ×é³É List
-	 * @param collection: À´Ô´¼¯ºÏ
-	 * @param propertyName: ÒªÌáÈ¡µÄÊôÐÔÃû
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static List fetchElementPropertyToList(Collection collection, String propertyName){
-		List list = new ArrayList();
-		
-		try {
-			for(Object obj: collection){
-				list.add(PropertyUtils.getProperty(obj, propertyName));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			convertToUncheckedException(e);
-		}
-		
-		return list;
-	}
-	
-	/**
-	 * ÌáÈ¡¼¯ºÏÖÐµÄ¶ÔÏóÊôÐÔ(Í¨¹ý getter º¯Êý), ×éºÏ³ÉÓÉ·Ö¸ô·û·Ö¸ôµÄ×Ö·û´®
-	 * @param collection: À´Ô´¼¯ºÏ
-	 * @param propertyName: ÒªÌáÈ¡µÄÊôÐÔÃû
-	 * @param seperator: ·Ö¸ô·û
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static String fetchElementPropertyToString(Collection collection, String propertyName, 
-			String seperator){
-		List list = fetchElementPropertyToList(collection, propertyName);
-		return StringUtils.join(list, seperator);
-	}
-	
-	/**
-	 * Í¨¹ý·´Éä, »ñµÃ¶¨Òå Class Ê±ÉùÃ÷µÄ¸¸ÀàµÄ·ºÐÍ²ÎÊýµÄÀàÐÍ
-	 * Èç: public EmployeeDao extends BaseDao<Employee, String>
-	 * @param clazz
-	 * @param index
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static Class getSuperClassGenricType(Class clazz, int index){
-		Type genType = clazz.getGenericSuperclass();
-		
-		if(!(genType instanceof ParameterizedType)){
-			return Object.class;
-		}
-		
-		Type [] params = ((ParameterizedType)genType).getActualTypeArguments();
-		
-		if(index >= params.length || index < 0){
-			return Object.class;
-		}
-		
-		if(!(params[index] instanceof Class)){
-			return Object.class;
-		}
-		
-		return (Class) params[index];
-	}
-	
-	/**
-	 * Í¨¹ý·´Éä, »ñµÃ Class ¶¨ÒåÖÐÉùÃ÷µÄ¸¸ÀàµÄ·ºÐÍ²ÎÊýÀàÐÍ
-	 * Èç: public EmployeeDao extends BaseDao<Employee, String>
-	 * @param <T>
-	 * @param clazz
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static<T> Class<T> getSuperGenericType(Class clazz){
-		return getSuperClassGenricType(clazz, 0);
-	}
-	
-	/**
-	 * Ñ­»·ÏòÉÏ×ªÐÍ, »ñÈ¡¶ÔÏóµÄ DeclaredMethod
-	 * @param object
-	 * @param methodName
-	 * @param parameterTypes
-	 * @return
-	 */
-	public static Method getDeclaredMethod(Object object, String methodName, Class<?>[] parameterTypes){
-		
-		for(Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()){
-			try {
-				//superClass.getMethod(methodName, parameterTypes);
-				return superClass.getDeclaredMethod(methodName, parameterTypes);
-			} catch (NoSuchMethodException e) {
-				//Method ²»ÔÚµ±Ç°Àà¶¨Òå, ¼ÌÐøÏòÉÏ×ªÐÍ
-			}
-			//..
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Ê¹ filed ±äÎª¿É·ÃÎÊ
-	 * @param field
-	 */
-	public static void makeAccessible(Field field){
-		if(!Modifier.isPublic(field.getModifiers())){
-			field.setAccessible(true);
-		}
-	}
-	
-	/**
-	 * Ñ­»·ÏòÉÏ×ªÐÍ, »ñÈ¡¶ÔÏóµÄ DeclaredField
-	 * @param object
-	 * @param filedName
-	 * @return
-	 */
-	public static Field getDeclaredField(Object object, String filedName){
-		
-		for(Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()){
-			try {
-				return superClass.getDeclaredField(filedName);
-			} catch (NoSuchFieldException e) {
-				//Field ²»ÔÚµ±Ç°Àà¶¨Òå, ¼ÌÐøÏòÉÏ×ªÐÍ
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Ö±½Óµ÷ÓÃ¶ÔÏó·½·¨, ¶øºöÂÔÐÞÊÎ·û(private, protected)
-	 * @param object
-	 * @param methodName
-	 * @param parameterTypes
-	 * @param parameters
-	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 */
-	public static Object invokeMethod(Object object, String methodName, Class<?> [] parameterTypes,
-			Object [] parameters) throws InvocationTargetException{
-		
-		Method method = getDeclaredMethod(object, methodName, parameterTypes);
-		
-		if(method == null){
-			throw new IllegalArgumentException("Could not find method [" + methodName + "] on target [" + object + "]");
-		}
-		
-		method.setAccessible(true);
-		
-		try {
-			return method.invoke(object, parameters);
-		} catch(IllegalAccessException e) {
-
-		} 
-		
-		return null;
-	}
-	
-	/**
-	 * Ö±½ÓÉèÖÃ¶ÔÏóÊôÐÔÖµ, ºöÂÔ private/protected ÐÞÊÎ·û, Ò²²»¾­¹ý setter
-	 * @param object
-	 * @param fieldName
-	 * @param value
-	 */
-	public static void setFieldValue(Object object, String fieldName, Object value){
-		Field field = getDeclaredField(object, fieldName);
-		
-		if (field == null)
-			throw new IllegalArgumentException("Could not find field [" + fieldName + "] on target [" + object + "]");
-		
-		makeAccessible(field);
-		
-		try {
-			field.set(object, value);
-		} catch (IllegalAccessException e) {
-
-		}
-	}
-	
-	/**
-	 * Ö±½Ó¶ÁÈ¡¶ÔÏóµÄÊôÐÔÖµ, ºöÂÔ private/protected ÐÞÊÎ·û, Ò²²»¾­¹ý getter
-	 * @param object
-	 * @param fieldName
-	 * @return
-	 */
-	public static Object getFieldValue(Object object, String fieldName){
-		Field field = getDeclaredField(object, fieldName);
-		
-		if (field == null)
-			throw new IllegalArgumentException("Could not find field [" + fieldName + "] on target [" + object + "]");
-		
-		makeAccessible(field);
-		
-		Object result = null;
-		
-		try {
-			result = field.get(object);
-		} catch (IllegalAccessException e) {
-
-		}
-		
-		return result;
-	}
-}
+//package com.xiong.core.utils;
+//
+//import java.lang.reflect.Field;
+//import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.Method;
+//import java.lang.reflect.Modifier;
+//import java.lang.reflect.ParameterizedType;
+//import java.lang.reflect.Type;
+//import java.util.ArrayList;
+//import java.util.Collection;
+//import java.util.Date;
+//import java.util.List;
+//
+//import org.apache.commons.beanutils.ConvertUtils;
+//import org.apache.commons.beanutils.PropertyUtils;
+//import org.apache.commons.beanutils.converters.DateConverter;
+//import org.apache.commons.lang.StringUtils;
+//
+///**
+// *
+// * ï¿½ï¿½ï¿½ï¿½ï¿½ Utils ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// * ï¿½á¹©ï¿½ï¿½ï¿½ï¿½Ë½ï¿½Ð±ï¿½ï¿½ï¿½, ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Class, ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ Utils ï¿½ï¿½ï¿½ï¿½
+// *
+// */
+//public class ReflectionUtils {
+//
+//	/**
+//	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ "ï¿½ï¿½ï¿½ï¿½ì³£" ×ªï¿½ï¿½Îª "ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ì³£"
+//	 * @return
+//	 */
+//	public static IllegalArgumentException convertToUncheckedException(Exception ex){
+//		if(ex instanceof IllegalAccessException || ex instanceof IllegalArgumentException
+//				|| ex instanceof NoSuchMethodException){
+//			throw new IllegalArgumentException("ï¿½ï¿½ï¿½ï¿½ï¿½ì³£", ex);
+//		}else{
+//			throw new IllegalArgumentException(ex);
+//		}
+//	}
+//
+//	/**
+//	 * ×ªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ toType ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ toType ×ªÎªï¿½Ö·ï¿½ï¿½ï¿½
+//	 * @param value:  ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+//	 * @param toType: ï¿½á¹©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ Class, ï¿½ï¿½ï¿½ï¿½ï¿½Ç»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÍµÄ°ï¿½×°ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//	 * @return
+//	 */
+//	public static Object convertValue(Object value, Class<?> toType){
+//		try {
+//			DateConverter dc = new DateConverter();
+//
+//			dc.setUseLocaleFormat(true);
+//			dc.setPatterns(new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"});
+//
+//			ConvertUtils.register(dc, Date.class);
+//
+//			return ConvertUtils.convert(value, toType);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw convertToUncheckedException(e);
+//		}
+//	}
+//
+//	/**
+//	 * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Í¨ï¿½ï¿½ getter ï¿½ï¿½ï¿½ï¿½), ï¿½ï¿½ï¿½ List
+//	 * @param collection: ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½
+//	 * @param propertyName: Òªï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public static List fetchElementPropertyToList(Collection collection, String propertyName){
+//		List list = new ArrayList();
+//
+//		try {
+//			for(Object obj: collection){
+//				list.add(PropertyUtils.getProperty(obj, propertyName));
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			convertToUncheckedException(e);
+//		}
+//
+//		return list;
+//	}
+//
+//	/**
+//	 * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Í¨ï¿½ï¿½ getter ï¿½ï¿½ï¿½ï¿½), ï¿½ï¿½Ï³ï¿½ï¿½É·Ö¸ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+//	 * @param collection: ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½
+//	 * @param propertyName: Òªï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//	 * @param seperator: ï¿½Ö¸ï¿½ï¿½ï¿½
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public static String fetchElementPropertyToString(Collection collection, String propertyName,
+//			String seperator){
+//		List list = fetchElementPropertyToList(collection, propertyName);
+//		return StringUtils.join(list, seperator);
+//	}
+//
+//	/**
+//	 * Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ Class Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½Ä·ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//	 * ï¿½ï¿½: public EmployeeDao extends BaseDao<Employee, String>
+//	 * @param clazz
+//	 * @param index
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public static Class getSuperClassGenricType(Class clazz, int index){
+//		Type genType = clazz.getGenericSuperclass();
+//
+//		if(!(genType instanceof ParameterizedType)){
+//			return Object.class;
+//		}
+//
+//		Type [] params = ((ParameterizedType)genType).getActualTypeArguments();
+//
+//		if(index >= params.length || index < 0){
+//			return Object.class;
+//		}
+//
+//		if(!(params[index] instanceof Class)){
+//			return Object.class;
+//		}
+//
+//		return (Class) params[index];
+//	}
+//
+//	/**
+//	 * Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ Class ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½Ä·ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//	 * ï¿½ï¿½: public EmployeeDao extends BaseDao<Employee, String>
+//	 * @param <T>
+//	 * @param clazz
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public static<T> Class<T> getSuperGenericType(Class clazz){
+//		return getSuperClassGenricType(clazz, 0);
+//	}
+//
+//	/**
+//	 * Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½, ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ DeclaredMethod
+//	 * @param object
+//	 * @param methodName
+//	 * @param parameterTypes
+//	 * @return
+//	 */
+//	public static Method getDeclaredMethod(Object object, String methodName, Class<?>[] parameterTypes){
+//
+//		for(Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()){
+//			try {
+//				//superClass.getMethod(methodName, parameterTypes);
+//				return superClass.getDeclaredMethod(methodName, parameterTypes);
+//			} catch (NoSuchMethodException e) {
+//				//Method ï¿½ï¿½ï¿½Úµï¿½Ç°ï¿½à¶¨ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
+//			}
+//			//..
+//		}
+//
+//		return null;
+//	}
+//
+//	/**
+//	 * Ê¹ filed ï¿½ï¿½Îªï¿½É·ï¿½ï¿½ï¿½
+//	 * @param field
+//	 */
+//	public static void makeAccessible(Field field){
+//		if(!Modifier.isPublic(field.getModifiers())){
+//			field.setAccessible(true);
+//		}
+//	}
+//
+//	/**
+//	 * Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½, ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ DeclaredField
+//	 * @param object
+//	 * @param filedName
+//	 * @return
+//	 */
+//	public static Field getDeclaredField(Object object, String filedName){
+//
+//		for(Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()){
+//			try {
+//				return superClass.getDeclaredField(filedName);
+//			} catch (NoSuchFieldException e) {
+//				//Field ï¿½ï¿½ï¿½Úµï¿½Ç°ï¿½à¶¨ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
+//			}
+//		}
+//		return null;
+//	}
+//
+//	/**
+//	 * Ö±ï¿½Óµï¿½ï¿½Ã¶ï¿½ï¿½ó·½·ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î·ï¿½(private, protected)
+//	 * @param object
+//	 * @param methodName
+//	 * @param parameterTypes
+//	 * @param parameters
+//	 * @return
+//	 * @throws InvocationTargetException
+//	 * @throws IllegalArgumentException
+//	 */
+//	public static Object invokeMethod(Object object, String methodName, Class<?> [] parameterTypes,
+//			Object [] parameters) throws InvocationTargetException{
+//
+//		Method method = getDeclaredMethod(object, methodName, parameterTypes);
+//
+//		if(method == null){
+//			throw new IllegalArgumentException("Could not find method [" + methodName + "] on target [" + object + "]");
+//		}
+//
+//		method.setAccessible(true);
+//
+//		try {
+//			return method.invoke(object, parameters);
+//		} catch(IllegalAccessException e) {
+//
+//		}
+//
+//		return null;
+//	}
+//
+//	/**
+//	 * Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ, ï¿½ï¿½ï¿½ï¿½ private/protected ï¿½ï¿½ï¿½Î·ï¿½, Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ setter
+//	 * @param object
+//	 * @param fieldName
+//	 * @param value
+//	 */
+//	public static void setFieldValue(Object object, String fieldName, Object value){
+//		Field field = getDeclaredField(object, fieldName);
+//
+//		if (field == null)
+//			throw new IllegalArgumentException("Could not find field [" + fieldName + "] on target [" + object + "]");
+//
+//		makeAccessible(field);
+//
+//		try {
+//			field.set(object, value);
+//		} catch (IllegalAccessException e) {
+//
+//		}
+//	}
+//
+//	/**
+//	 * Ö±ï¿½Ó¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ, ï¿½ï¿½ï¿½ï¿½ private/protected ï¿½ï¿½ï¿½Î·ï¿½, Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ getter
+//	 * @param object
+//	 * @param fieldName
+//	 * @return
+//	 */
+//	public static Object getFieldValue(Object object, String fieldName){
+//		Field field = getDeclaredField(object, fieldName);
+//
+//		if (field == null)
+//			throw new IllegalArgumentException("Could not find field [" + fieldName + "] on target [" + object + "]");
+//
+//		makeAccessible(field);
+//
+//		Object result = null;
+//
+//		try {
+//			result = field.get(object);
+//		} catch (IllegalAccessException e) {
+//
+//		}
+//
+//		return result;
+//	}
+//}
