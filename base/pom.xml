@@ -21,6 +21,7 @@
 	<modules>
 		<module>easy_a</module>
 		<module>easy_b</module>
+		<module>base_b_p</base_b_p>
 		<module>easy_collection</module>
 		<module>easy_common</module>
 		<module>easy_thread</module>

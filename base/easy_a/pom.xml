@@ -16,6 +16,19 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<optional>true</optional>
+			<scope>compile</scope>
+			<!--
+			简单来说，compile、runtime和provided的区别，需要在执行mvn package命令，且打包格式是war之类（而不是默认的jar）的时候才能看出来。
+			通过compile和provided引入的jar包，里面的类，你在项目中可以直接import进来用，编译没问题，但是runtime引入的jar包中的类，
+			项目代码里不能直接用，用了无法通过编译，只能通过反射之类的方式来用。通过compile和runtime引入的jar包，会出现在你的项目war包里，
+			而provided引入的jar包则不会。
+			compile， 缺省值，适用于所有阶段，会随着项目一起发布。
+
+			  provided，类似compile，期望JDK、容器或使用者会提供这个依赖。如servlet-api-2.3.jar。
+			  runtime， 在运行时使用，如JDBC驱动，适用运行和测试阶段。   如plexus-utils-1.1.jar
+			  test     只在测试时使用，用于编译和运行测试代码。不会随项目发布。如Junit-3.8.1.jar
+			  system， 类似provided，需要显式提供包含依赖的jar，Maven不会在Repository中查找它。
+			-->
 		</dependency>
 	</dependencies>
    <build>
