@@ -9,8 +9,26 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.easy</groupId>
+				<artifactId>easy_b_p</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+		<!--
+			3、scope=import只能用在dependencyManagement里面,且仅用于type=pom的dependency
+		-->
+	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.easy</groupId>
 			<artifactId>easy_a</artifactId>
