@@ -1,6 +1,6 @@
 package com.easy;
 
-import com.segi.uhomecp.utils.ASCUtil;
+//import com.segi.uhomecp.utils.ASCUtil;
 import org.jasypt.util.text.BasicTextEncryptor;
 
 public class AscUtil {
@@ -15,12 +15,12 @@ public class AscUtil {
 //		jdbc.password=+RTYb/VgcvMYvBsivIz/tw==
 //        jdbc.username=Or8i3XboPqc=
 //                jdbc.password=BQ+OPspqTqpyE/b88Ya6kQ==
-        ASCUtil des = new ASCUtil();
-        System.out.println("--------------");
-        System.out.println(ASCUtil.decryption("Xm2Y5AOHeZI="));
-        System.out.println(ASCUtil.decryption("/Whxdgv680Qrprpp6WqXGg=="));
-        System.out.println("medApp--->"+des.encryption("knowApp"));
-        System.out.println("732_Rsrxr3su7--->"+des.encryption("aXrXU3c83q"));
+//        ASCUtil des = new ASCUtil();
+//        System.out.println("--------------");
+//        System.out.println(ASCUtil.decryption("Xm2Y5AOHeZI="));
+//        System.out.println(ASCUtil.decryption("/Whxdgv680Qrprpp6WqXGg=="));
+//        System.out.println("medApp--->"+des.encryption("knowApp"));
+//        System.out.println("732_Rsrxr3su7--->"+des.encryption("aXrXU3c83q"));
 
 
 		/*result = decryption("k+IRHtpG8hI=");

@@ -13,7 +13,7 @@ public class EndRunnable {
 		public void run() {
 
 			String threadName = Thread.currentThread().getName();
-			while(Thread.currentThread().isInterrupted()) {
+			while(!Thread.currentThread().isInterrupted()) {
 				System.out.println(threadName+" is run!");
 			}
 			System.out.println(threadName+" interrput flag is "
@@ -25,7 +25,7 @@ public class EndRunnable {
 		UseRunnable useRunnable = new UseRunnable();
 		Thread endThread = new Thread(useRunnable,"endThread");
 		endThread.start();
-		Thread.sleep(20);
+		Thread.sleep(100);
 		endThread.interrupt();
 	}
 

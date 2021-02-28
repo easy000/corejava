@@ -1,7 +1,7 @@
 package com.easy.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.validator.constraints.NotBlank;
+//import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * Created by jackzhong on 9/5/16.
@@ -12,27 +12,27 @@ public class BaseDto<T>  {
     /**
      * 请求唯一标识
      */
-    @NotBlank(message = "requestId不能为空")
+//    @NotBlank(message = "requestId不能为空")
     private String requestId;
 
     /**
      * 请求时间
      */
-    @NotBlank(message = "requestTime不能为空")
+//    @NotBlank(message = "requestTime不能为空")
     private String requestTime;
 
     /**
      * 随机字符串
      */
-    @NotBlank(message = "noncestr不能为空")
+//    @NotBlank(message = "noncestr不能为空")
     private String noncestr;
 
     /**
      * 应用Key
      */
-    @NotBlank(message = "appKey不能为空")
+//    @NotBlank(message = "appKey不能为空")
     private String appKey;
-    @NotBlank(message = "apiVersion不能为空")
+//    @NotBlank(message = "apiVersion不能为空")
     private String apiVersion;
     private T      data;
 
