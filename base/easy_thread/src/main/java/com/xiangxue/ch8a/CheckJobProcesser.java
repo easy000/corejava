@@ -14,7 +14,7 @@ import com.xiangxue.ch8a.vo.JobInfo;
  */
 public class CheckJobProcesser {
     private static DelayQueue<ItemVo<String>> queue 
-    	= new DelayQueue<ItemVo<String>>();//存放已完成任务等待过期的队列
+    	= new DelayQueue<>();//存放已完成任务等待过期的队列
     
 	//单例模式------
 	private CheckJobProcesser() {}
