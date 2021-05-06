@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service(value = "appWxPayClient")
+@Service(value = "model1Power")
 public class Model1Power extends AbstractPowerClient {
 
     @Override
