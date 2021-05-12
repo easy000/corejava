@@ -40,8 +40,8 @@ public class AscUtil {
 //        String password = textEncryptor.encrypt("bsvrvto0320dt");
 
 
-        String username = textEncryptor.decrypt("tbVhQQSBLwztku8h7dVGHglQcBVSNbJa");
-        String password = textEncryptor.decrypt("DV7EcnO2pnqUfXe21/6PyYhHxGmZlNxJrOwRmQQ2uU0=");
+        String username = textEncryptor.decrypt("HVqufEpwxfj6A4f3EOAPkg0IcQWfyQ6B");
+        String password = textEncryptor.decrypt("bnoXwX2tMwNP4bj6vtXqWAUZQvnGfFSTrhMVmk3iktk=");
         System.out.println("username:"+username);
         System.out.println("password:"+password);
     }

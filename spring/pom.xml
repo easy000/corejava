@@ -20,6 +20,7 @@
 
 	<modules>
 		<module>easy_spring_core</module>
+		<module>easy_spring_quarzt</module>
 	</modules>
 
 	<dependencies>
