@@ -17,10 +17,12 @@ public class AscUtil {
 //                jdbc.password=BQ+OPspqTqpyE/b88Ya6kQ==
         ASCUtil des = new ASCUtil();
         System.out.println("--------------");
-        System.out.println(ASCUtil.decryption("Xm2Y5AOHeZI="));
-        System.out.println(ASCUtil.decryption("RzPHK4KXpL63m09dWL2i6w=="));
-        System.out.println("medApp--->"+des.encryption("knowApp"));
-        System.out.println("732_Rsrxr3su7--->"+des.encryption("aXrXU3c83q"));
+//        jdbc.username=2MgCVQPpUYQYvBsivIz/tw==
+//        jdbc.password=BQ+OPspqTqpyE/b88Ya6kQ==
+        System.out.println(ASCUtil.decryption("2MgCVQPpUYQYvBsivIz/tw=="));
+        System.out.println(ASCUtil.decryption("BQ+OPspqTqpyE/b88Ya6kQ=="));
+        System.out.println("uhome--->"+des.encryption("uhome"));
+        System.out.println("uhome110--->"+des.encryption("uhome110"));
 //        jdbc.username=EHBTwYwr8jg=
 //                jdbc.password=/Whxdgv680Qrprpp6WqXGg==
 //		result = decryption("k+IRHtpG8hI=");

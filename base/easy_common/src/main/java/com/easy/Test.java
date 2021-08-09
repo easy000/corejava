@@ -17,17 +17,17 @@ import java.util.Optional;
  */
 public class Test {
     public static void main(String[] args) {
-        InvocationHandler invoke = (s) -> {
-            System.out.println("1");
-            return 1;
-        };
-        invoke.invoke(1);
-
-        Student stu = new Student();
-        Optional<Student> opt = Optional.ofNullable(stu);
-        if (opt.isPresent()) {};
-        opt.ifPresent(obj -> System.out.println(obj.getAge()));
-        opt.map(obj->obj.getAge() == 0);
+//        InvocationHandler invoke = (s) -> {
+//            System.out.println("1");
+//            return 1;
+//        };
+//        invoke.invoke(1);
+//
+//        Student stu = new Student();
+//        Optional<Student> opt = Optional.ofNullable(stu);
+//        if (opt.isPresent()) {};
+//        opt.ifPresent(obj -> System.out.println(obj.getAge()));
+//        opt.map(obj->obj.getAge() == 0);
 
     }
 }

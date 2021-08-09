@@ -38,7 +38,7 @@ public class StreamUtils {
 //                add(new Student(20163001, "丁奉", 24, 5, "土木工程", "南京大学"));
             }
         };
-        System.out.println(students.stream().collect(Collectors.toMap(Student::getId, Function.identity(),(k1,k2) -> k1)));
+//        System.out.println(students.stream().collect(Collectors.toMap(Student::getId, Function.identity(),(k1,k2) -> k1)));
 
 
 
