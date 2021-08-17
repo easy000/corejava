@@ -19,8 +19,10 @@ public class AscUtil {
         System.out.println("--------------");
 //        jdbc.username=2MgCVQPpUYQYvBsivIz/tw==
 //        jdbc.password=BQ+OPspqTqpyE/b88Ya6kQ==
-        System.out.println(ASCUtil.decryption("2MgCVQPpUYQYvBsivIz/tw=="));
-        System.out.println(ASCUtil.decryption("BQ+OPspqTqpyE/b88Ya6kQ=="));
+//        jdbc.username=YYpVRLEDo5o=
+//        jdbc.password=EcUaPB/dilna1jbAzX7QYg==
+        System.out.println(ASCUtil.decryption("7jbRPyYjrhE="));
+        System.out.println(ASCUtil.decryption("aNRo2lraxE8e77xZaYVNPA=="));
         System.out.println("uhome--->"+des.encryption("uhome"));
         System.out.println("uhome110--->"+des.encryption("uhome110"));
 //        jdbc.username=EHBTwYwr8jg=
