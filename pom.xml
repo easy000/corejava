@@ -20,7 +20,7 @@
     <properties>
         <!--项目构建基本配置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.1.2.RELEASE</spring.version>
+        <spring.version>5.2.22.RELEASE</spring.version>
         <log4j2.version>2.9.0</log4j2.version>
 
         <fasterxml.jackson.version>2.8.5</fasterxml.jackson.version>
